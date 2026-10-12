@@ -1,8 +1,8 @@
-<a href="https://github.com/Farhan7-tech/SkyLink_P2P_Service"><img src=".github/assets/banner.svg" width="100%" alt="SkyLink P2P: upload once, download once, gone."></a>
+<a href="https://github.com/Farhan7-tech/SkyLink_Transfer_Service"><img src=".github/assets/banner.svg" width="100%" alt="SkyLink Transfer: upload once, download once, gone."></a>
 
 ## About
 
-SkyLink P2P Service is the transfer engine behind the [SkyLink File Share Application](https://github.com/Farhan7-tech/SkyLink_File_Share_Application). It has no Spring Boot and no Tomcat. It is built on the JDK's own `com.sun.net.httpserver.HttpServer` and raw `java.net` sockets, so the only thing it needs to run is Java.
+SkyLink Transfer Service is the transfer engine behind the [SkyLink File Share Application](https://github.com/Farhan7-tech/SkyLink_File_Share_Application). It has no Spring Boot and no Tomcat. It is built on the JDK's own `com.sun.net.httpserver.HttpServer` and raw `java.net` sockets, so the only thing it needs to run is Java.
 
 Each uploaded file gets its own temporary socket server on a random port and a one-time access code. When someone downloads it with that code, the file is streamed to them and then removed from the server.
 
@@ -25,7 +25,7 @@ Each uploaded file gets its own temporary socket server on a random port and a o
 ## How it works
 
 ```
- Uploader                    SkyLink P2P Service                    Downloader
+ Uploader               SkyLink Transfer Service                    Downloader
     │                               │                                   │
     │── POST /upload (file) ───────▶│ validate → save to temp dir       │
     │                               │ pick a free port + 6-digit token  │
@@ -90,8 +90,8 @@ curl -OJ "http://localhost:8081/download?token=482915"
 ### Run locally
 
 ```bash
-git clone https://github.com/Farhan7-tech/SkyLink_P2P_Service.git
-cd SkyLink_P2P_Service
+git clone https://github.com/Farhan7-tech/SkyLink_Transfer_Service.git
+cd SkyLink_Transfer_Service
 mvn compile
 java -cp target/classes P2P.App
 ```
@@ -124,22 +124,11 @@ src/main/java/P2P/
 
 ## Things to know
 
+- Transfers are relayed through this server; this is not direct browser-to-browser peer-to-peer transfer.
 - A file's socket server waits **50 seconds** for a connection. If nobody downloads in that window, the file can no longer be downloaded.
 - The listener timeout does not currently clear its maps or delete the original file; a later request with that stale PIN can return `500`.
 - Tokens and file info are kept in memory, so restarting the server clears every pending share.
 - Uploads are buffered in memory before they're written to disk, so plan server memory around the 500 MB limit.
-
-## Learn and Prepare for Interviews
-
-- **[Every Java line explained](docs/LINE_BY_LINE_GUIDE.md)** and **[interactive source reader](docs/code-walkthrough/index.html):** all eight production files, original line numbers, what/why/examples, Java syntax, and corrections to misleading comments.
-
-- **[Animated beginner lesson](docs/learning/index.html):** follow the bytes, pause each step, explore six transfer scenarios, track a two-day study plan and practice flashcards. Open the downloaded HTML locally; GitHub's file view shows its source.
-- **[Complete P2P guide and two-day plan](INTERVIEW_PREP.md):** every production/test module, the React integration, actual behavior, limitations and revision exercises.
-- **[80 questions with model answers](docs/QUESTION_BANK.md):** 20 beginner, 30 intermediate and 30 advanced.
-- **[Run a local transfer](docs/HOW_TO_RUN.md):** build, upload, verify binary integrity, retry a PIN and troubleshoot.
-- **[Verification record](docs/VERIFICATION.md):** local build, transfer and browser checks with their limits.
-
-The learning material distinguishes the implemented server-relayed transfer from proposed direct browser P2P and end-to-end encryption. Successful-path cleanup is implemented; timeout/failure cleanup is incomplete.
 
 ## Related Projects
 
